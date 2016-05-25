@@ -15,7 +15,7 @@ namespace Reflux.Services
 
         public List<Flow> GetFlows()
         {
-            var url = $"{Constants.BaseUrl}{"flows"}";
+            var url = $"{Constants.ApiUrl}{"flows"}";
 
             var responseText = Internet.Get(url, _apiKey);
 

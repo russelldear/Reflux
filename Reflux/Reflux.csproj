@@ -77,10 +77,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
-    <Compile Include="DataAccess\FlowMessageStore.cs" />
     <Compile Include="Model\Converter.cs" />
     <Compile Include="Model\Flow.cs" />
-    <Compile Include="Model\FlowMessage.cs" />
     <Compile Include="Model\MessageSearchResult.cs" />
     <Compile Include="Model\Reminder.cs" />
     <Compile Include="Model\SearchResult.cs" />

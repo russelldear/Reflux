@@ -19,7 +19,7 @@ namespace Reflux.Services
 
         public void AddTag(string messageId, string flowName, string message)
         {
-            var url = $"{Constants.BaseUrl}{"flows/"}{Constants.CompanyName}{"/"}{flowName}{"/messages/"}{messageId}";
+            var url = $"{Constants.ApiUrl}{"flows/"}{Constants.CompanyName}{"/"}{flowName}{"/messages/"}{messageId}";
 
             Internet.Put(url, _apiKey, "{ \"tags\":  [\"" + message + "\"] }");
         }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
-using Reflux.DataAccess;
 using Reflux.Model;
 
 namespace Reflux.Services
@@ -10,13 +9,11 @@ namespace Reflux.Services
     public class ReminderService
     {
         private readonly string _apiKey;
-        private readonly FlowMessageStore _flowMessageStore;
         private readonly TagService _tagService;
 
         public ReminderService(string apiKey)
         {
             _apiKey = apiKey;
-            _flowMessageStore = new FlowMessageStore();
             _tagService = new TagService(apiKey);
         }
 
@@ -24,7 +21,7 @@ namespace Reflux.Services
         {
             EnsureConversationVisibility(reminder.UserId);
 
-            var url = $"{Constants.BaseUrl}{"private/"}{reminder.UserId}{"/messages"}";
+            var url = $"{Constants.ApiUrl}{"private/"}{reminder.UserId}{"/messages"}";
 
             var message = $"{{ \"event\": \"message\", \"content\": \"Here you go: {reminder.Url}\" }}";
 
@@ -34,8 +31,7 @@ namespace Reflux.Services
 
             if (result.Id != null)
             {
-                _flowMessageStore.Add(reminder.FlowId, reminder.Id);
-                _tagService.AddTag(reminder.Id, reminder.OriginalFlowName, "reminder-set");
+                _tagService.AddTag(reminder.Id, reminder.OriginalFlowName, Constants.RemindMeSent);
             }
         }
 
@@ -43,7 +39,7 @@ namespace Reflux.Services
         {
             try
             {
-                var url = $"{Constants.BaseUrl}{"private/"}{userId}";
+                var url = $"{Constants.ApiUrl}{"private/"}{userId}";
 
                 Internet.Put(url, _apiKey, "{ \"open\": true }");
             }

@@ -15,7 +15,7 @@ namespace Reflux.Services
 
         public List<User> GetUsers()
         {
-            var url = $"{Constants.BaseUrl}{"users"}";
+            var url = $"{Constants.ApiUrl}{"users"}";
 
             var responseText = Internet.Get(url, _apiKey);
 

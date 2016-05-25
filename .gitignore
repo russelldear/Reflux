@@ -66,5 +66,5 @@ project/data/
 /.idea/
 *.dll
 *.dll
-
-*packages/*
+Reflux/packages/*
+/Reflux/packages/*

@@ -34,7 +34,5 @@ namespace Reflux.Model
 
         [JsonProperty("last_message_at")]
         public DateTime? LastMessageAt { get; set; }
-
-        public string LastRemindedMessageId { get; set; }
     }
 }

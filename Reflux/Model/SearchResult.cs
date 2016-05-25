@@ -34,6 +34,6 @@ namespace Reflux.Model
 
         public string UserName { get; set; }
 
-        public string Url => $"https://www.flowdock.com/app/{Constants.CompanyName}/{OriginalFlowName}/threads/{ThreadId}";
+        public string Url => $"{Constants.WebUrl}{"app/"}{Constants.CompanyName}/{OriginalFlowName}/threads/{ThreadId}";
     }
 }

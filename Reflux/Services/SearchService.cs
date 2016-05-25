@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Reflux.DataAccess;
 using Reflux.Model;
 using System.Collections.Generic;
 using System.Configuration;
@@ -13,7 +12,6 @@ namespace Reflux.Services
         private readonly string _apiKey;
         private readonly UserService _userService;
         private readonly FlowService _flowService;
-        private readonly FlowMessageStore _flowMessageStore;
 
         public SearchService(string apiKey)
         {
@@ -25,8 +23,6 @@ namespace Reflux.Services
             {
                 _apiKey = apiKey;
             }
-
-            _flowMessageStore = new FlowMessageStore();
 
             _userService = new UserService(_apiKey);
             _flowService = new FlowService(_apiKey);
@@ -47,9 +43,7 @@ namespace Reflux.Services
 
             foreach (var flow in Flows)
             {
-                var sinceMessageId = GetLatestMessageId(flow);
-                
-                var url = $"{Constants.BaseUrl}{"flows/"}{Constants.CompanyName}{"/"}{flow.ParameterizedName}{"/messages/?event=message&since_id="}{sinceMessageId}{"&search="}{searchtext}";
+                var url = $"{Constants.ApiUrl}{"flows/"}{Constants.CompanyName}{"/"}{flow.ParameterizedName}{"/messages/?event=message&search="}{searchtext}";
 
                 var responseText = Internet.Get(url, _apiKey);
 
@@ -65,11 +59,6 @@ namespace Reflux.Services
             }
 
             return result;
-        }
-
-        public string GetLatestMessageId(Flow flow)
-        {
-            return _flowMessageStore.Find(flow.Id)?.LastRemindedMessageId ?? "0";
         }
     }
 }

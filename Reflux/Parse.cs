@@ -54,7 +54,7 @@ namespace Reflux
             {
                 try
                 {
-                    var quanitity = Parse(bits[i]);
+                    var quantity = Parse(bits[i]);
 
                     break;
                 }

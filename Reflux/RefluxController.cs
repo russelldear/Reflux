@@ -22,12 +22,16 @@ namespace Reflux
 
                 var searchResults = searchService.Search(Constants.RemindMe);
 
+                searchResults = searchResults.Where(r => !r.Tags.Contains(Constants.RemindMeSent)).ToList();
+
                 foreach (var searchResult in searchResults)
                 {
                     var reminderDateTime = Parse.Time(searchResult.Content, searchResult.CreatedAt);
 
                     if (reminderDateTime.HasValue)
                     {
+                        tagService.AddTag(searchResult.Id, searchResult.OriginalFlowName, Constants.RemindMeWillSend);
+
                         if (reminderDateTime.Value < DateTime.UtcNow)
                         {
                             var reminder = searchResult.ToReminder(reminderDateTime.Value);
@@ -37,7 +41,7 @@ namespace Reflux
                     }
                     else
                     {
-                        tagService.AddTag(searchResult.Id, searchResult.OriginalFlowName, "dunno-what-this-means");
+                        tagService.AddTag(searchResult.Id, searchResult.OriginalFlowName, Constants.RemindMeUnknown);
                     }
                 }
 
