@@ -15,6 +15,7 @@ namespace Reflux
             try
             {
                 var apiKey = ConfigurationManager.AppSettings["FlowdockAPIKey"];
+                var knownCommands = ConfigurationManager.AppSettings["KnownCommands"].Split('|');
 
                 var searchService = new SearchService(apiKey);
                 var reminderService = new ReminderService(apiKey);
@@ -41,7 +42,10 @@ namespace Reflux
                     }
                     else
                     {
-                        tagService.AddTag(searchResult.Id, searchResult.OriginalFlowName, Constants.RemindMeUnknown);
+                        if (!knownCommands.Any(c => searchResult.Content.Contains(c)))
+                        {
+                            tagService.AddTag(searchResult.Id, searchResult.OriginalFlowName, Constants.RemindMeUnknown);
+                        }
                     }
                 }
 

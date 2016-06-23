@@ -54,7 +54,7 @@ namespace Reflux
             {
                 try
                 {
-                    var quantity = Parse(bits[i]);
+                    Parse(bits[i]);
 
                     break;
                 }
@@ -79,7 +79,7 @@ namespace Reflux
 
             double multiplier;
 
-            if (!KnownUnits.ContainsKey(bits[1]))
+            if (bits.Count < 2 || !KnownUnits.ContainsKey(bits[1]))
             {
                 return null;
             }
