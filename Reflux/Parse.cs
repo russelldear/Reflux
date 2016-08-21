@@ -50,6 +50,7 @@ namespace Reflux
                 return null;
             }
 
+            // Ignore everything until you hit a number you can parse.
             for (var i = 0; i < bits.Count; i++)
             {
                 try
@@ -85,7 +86,7 @@ namespace Reflux
             }
             else
             {
-                multiplier = KnownUnits[bits[1]];
+                multiplier = KnownUnits[bits[1].ToLowerInvariant()];
             }
 
             return quantity*multiplier;

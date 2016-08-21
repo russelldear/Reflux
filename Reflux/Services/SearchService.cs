@@ -13,6 +13,8 @@ namespace Reflux.Services
         private readonly UserService _userService;
         private readonly FlowService _flowService;
 
+        private NLog.Logger logger = NLog.LogManager.GetCurrentClassLogger();
+
         public SearchService(string apiKey)
         {
             if (IsNullOrEmpty(apiKey))
@@ -29,6 +31,9 @@ namespace Reflux.Services
 
             _users = _userService.GetUsers();
             _flows = _flowService.GetFlows();
+
+            logger.Info("Found " + Users.Count + " users.");
+            logger.Info("Found " + Flows.Count + " flows to search.");
         }
 
         private List<User> _users;
@@ -51,7 +56,7 @@ namespace Reflux.Services
                     .Select(r => {
                         r.OriginalFlowName = flow.ParameterizedName;
                         r.FlowName = flow.Name;
-                        r.UserName = Users.First(u => u.Id == r.UserId).Name;
+                        r.UserName = Users.FirstOrDefault(u => u.Id == r.UserId)?.Name;
                         return r;
                     });
 
