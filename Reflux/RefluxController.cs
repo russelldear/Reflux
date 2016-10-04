@@ -3,6 +3,7 @@ using Reflux.Model;
 using Reflux.Services;
 using System.Configuration;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Reflux
 {
@@ -25,31 +26,47 @@ namespace Reflux
 
                 searchResults = searchResults.Where(r => !r.Tags.Contains(Constants.RemindMeSent)).ToList();
 
+                logger.Info(searchResults.Count + " search results returned from " + searchResults.OrderBy(r => r.CreatedAt).FirstOrDefault()?.CreatedAtString + " onward.");
+
+                List<Exception> errors = new List<Exception>();
+
                 foreach (var searchResult in searchResults)
                 {
-                    var reminderDateTime = Parse.Time(searchResult.Content, searchResult.CreatedAt);
-
-                    if (reminderDateTime.HasValue)
+                    try
                     {
-                        tagService.AddTag(searchResult.Id, searchResult.OriginalFlowName, Constants.RemindMeWillSend);
+                        var reminderDateTime = Parse.Time(searchResult.Content, searchResult.CreatedAt);
 
-                        if (reminderDateTime.Value < DateTime.UtcNow)
+                        if (reminderDateTime.HasValue)
                         {
-                            var reminder = searchResult.ToReminder(reminderDateTime.Value);
+                            tagService.AddTag(searchResult.Id, searchResult.OriginalFlowName, Constants.RemindMeWillSend);
 
-                            reminderService.SendReminder(reminder);
+                            if (reminderDateTime.Value < DateTime.UtcNow)
+                            {
+                                var reminder = searchResult.ToReminder(reminderDateTime.Value);
+
+                                reminderService.SendReminder(reminder);
+                            }
+                        }
+                        else
+                        {
+                            if (!knownCommands.Any(c => searchResult.Content.Contains(c)))
+                            {
+                                tagService.AddTag(searchResult.Id, searchResult.OriginalFlowName, Constants.RemindMeUnknown);
+                            }
                         }
                     }
-                    else
+                    catch(Exception ex)
                     {
-                        if (!knownCommands.Any(c => searchResult.Content.Contains(c)))
-                        {
-                            tagService.AddTag(searchResult.Id, searchResult.OriginalFlowName, Constants.RemindMeUnknown);
-                        }
+                        // Don't break for everyone if one reminder doesn't work.
+                        errors.Add(ex);
                     }
                 }
 
-                logger.Info(searchResults.Count + " search results returned from " + searchResults.OrderBy(r => r.CreatedAt).FirstOrDefault()?.CreatedAtString + " onward.");
+                if (errors.Count > 0)
+                {
+                    var errorText = string.Join(Environment.NewLine, errors.Select(e => e.Message).ToList());
+                    throw new Exception("The following errors were encountered while reminding: " + errorText);
+                }
             }
             catch (Exception ex)
             {
