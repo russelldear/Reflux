@@ -43,7 +43,7 @@ namespace Reflux
                 }
             }
 
-            var bits = new List<string>(trailingText.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries));
+            var bits = new List<string>(trailingText.Split(new[] { ' ', '.', ',' }, StringSplitOptions.RemoveEmptyEntries));
 
             if (bits.Count < 1)
             {
